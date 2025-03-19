@@ -27,18 +27,17 @@ builder.Services.AddCors(option =>
 });
 var app = builder.Build();
 app.UseCors("AllowAllOrigins");
-if (app.Environment.IsDevelopment())
+
+app.UseSwagger(options =>
 {
-    app.UseSwagger(options =>
-{
-    options.SerializeAsV2 = true;
+options.SerializeAsV2 = true;
 });
-    app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-        options.RoutePrefix = "swagger";
-    });
-}
+app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    options.RoutePrefix = "swagger";
+});
+
 
 app.MapGet("/", () => "Hello World!");
 app.MapGet("/items", async (ToDoDbContext db) =>
@@ -52,7 +51,7 @@ app.MapPost("/items", async (ToDoDbContext db, Item item) =>
     await db.SaveChangesAsync();
     return item;
 });
-app.MapPost("/items/creatItem{name}", async (string name,ToDoDbContext db) =>
+app.MapPost("/items/creatItem{name}", async (string name, ToDoDbContext db) =>
 {
     Item item = new Item() { Name = name, IsComplete = false };
     db.Items.Add(item);
