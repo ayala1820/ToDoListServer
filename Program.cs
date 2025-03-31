@@ -13,7 +13,8 @@ builder.Services.AddSwaggerGen();
 
 IServiceCollection serviceCollection = builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseMySql(
-        builder.Configuration.GetConnectionString("ToDoDB"),
+        // builder.Configuration.GetConnectionString("ToDoDB"),
+        Environment.GetEnvironmentVariable("ToDoDB"),
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ToDoDB"))
     ));
 builder.Services.AddCors(option =>
