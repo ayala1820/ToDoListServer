@@ -14,12 +14,13 @@ builder.Services.AddSwaggerGen();
 IServiceCollection serviceCollection = builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseMySql(
         // builder.Configuration.GetConnectionString("ToDoDB"),
-        Environment.GetEnvironmentVariable("ToDoDB"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ToDoDB"))
+        //   ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ToDoDB"))
+        Environment.GetEnvironmentVariable("ToDoDB"), new MySqlServerVersion(new Version(8, 0, 41)),
+        mySqlOptions => mySqlOptions.EnableRetryOnFailure()
+      
     ));
 builder.Services.AddCors(option =>
 {
-
     option.AddPolicy("AllowAllOrigins",
         builder => builder.AllowAnyOrigin()
                             .AllowAnyMethod()
@@ -31,7 +32,7 @@ app.UseCors("AllowAllOrigins");
 
 app.UseSwagger(options =>
 {
-options.SerializeAsV2 = true;
+    options.SerializeAsV2 = true;
 });
 app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
 {
